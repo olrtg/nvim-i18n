@@ -2,18 +2,13 @@ local M = {}
 
 local state = {}
 
---- @param captures string[]
-function get_nui_tree_nodes(captures) end
-
 M.open = function()
-    local Split = require("nui.split")
-    local NuiText = require("nui.text")
-    local NuiTree = require("nui.tree")
+    local translation = require("nvim-i18n.translation")
+    local ui = require("nvim-i18n.ui")
 
-    -- local event = require("nui.utils.autocmd").event
     local ts_utils = require("nvim-treesitter.ts_utils")
 
-    -- This matches `t('path.to.translation')` function calls
+    --- This matches `t('path.to.translation')` function calls
     local query_t_calls = [[
         (call_expression
           function: (identifier) @t (#match? @t "t")
@@ -42,69 +37,10 @@ M.open = function()
         end
     end
 
-    local raw_file = vim.fn.readfile("src/locales/en.json")
-    local file = vim.fn.join(raw_file, "\n")
-    local translation_file = vim.json.decode(file)
+    -- local key = vim.fn.input({ prompt = "Enter key: " })
 
-    local key = vim.fn.input({ prompt = "Enter key: " })
-    local parse_key = vim.fn.split(key, "\\.")
-
-    local split = Split({
-        relative = "editor",
-        position = "bottom",
-        size = "40%",
-    })
-
-    -- mount/open the component
-    split:mount()
-
-    split:map("n", "q", function()
-        split:unmount()
-    end, { noremap = true })
-
-    local tree = NuiTree({
-        winid = split.winid,
-        nodes = {
-            NuiTree.Node({ text = "a" }),
-            NuiTree.Node({ text = "b" }, {
-                NuiTree.Node({ text = "b-1" }),
-                NuiTree.Node({ text = { "b-2", "b-3" } }),
-            }),
-        },
-    })
-
-    local map_options = { noremap = true, nowait = true }
-
-    -- print current node
-    split:map("n", "<CR>", function()
-        local node = tree:get_node()
-        vim.print(node)
-    end, map_options)
-
-    -- collapse current node
-    split:map("n", "h", function()
-        local node = tree:get_node()
-
-        if node:collapse() then
-            tree:render()
-        end
-    end, map_options)
-
-    -- expand current node
-    split:map("n", "l", function()
-        local node = tree:get_node()
-
-        if node:expand() then
-            tree:render()
-        end
-    end, map_options)
-
-    tree:render()
-
-    -- unmount component when cursor leaves buffer
-    -- split:on(event.BufLeave, function()
-    --     split:unmount()
-    -- end)
+    local split = ui.create_split()
+    ui.create_tree(split, ui.get_translation_nodes(captures))
 end
 
 M.setup = function()
