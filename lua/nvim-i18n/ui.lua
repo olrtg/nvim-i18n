@@ -29,6 +29,29 @@ M.create_tree = function(split, nodes)
 
     local map_options = { noremap = true, nowait = true }
 
+    -- toggle or edit current node
+    split:map("n", "<CR>", function()
+        local node = tree:get_node()
+
+        if not node:has_children() then
+            local locale = node.text:match("^[^:]+")
+            local node_without_locale = node.text:gsub("^[^:]+: ", "")
+            local path = tree:get_node(node:get_parent_id()).text
+            vim.ui.input(
+                { prompt = "Enter new translation: ", default = node_without_locale },
+                function(new_translation)
+                    t.edit_translation(locale, path, new_translation)
+                end
+            )
+        elseif node:is_expanded() then
+            node:collapse()
+        else
+            node:expand()
+        end
+
+        tree:render()
+    end, map_options)
+
     -- collapse current node
     split:map("n", "h", function()
         local node = tree:get_node()
@@ -72,6 +95,19 @@ M.get_translation_nodes = function(matches)
     end
 
     return vim.tbl_values(nodes)
+end
+
+M.prompt_new_translation = function(node)
+    local node_without_locale = node.text:gsub("^[^:]+: ", "")
+
+    local translation = vim.ui.input(
+        { prompt = "Enter new translation: ", default = node_without_locale },
+        function(new_translation)
+            return new_translation
+        end
+    )
+
+    return translation
 end
 
 return M

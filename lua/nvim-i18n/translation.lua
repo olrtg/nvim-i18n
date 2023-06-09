@@ -15,7 +15,6 @@ M.detect_languages = function()
 
     return locales
 end
-
 ---@param path string
 M.read_translation_file = function(path)
     local raw_file = vim.fn.readfile(path)
@@ -42,6 +41,28 @@ M.get_translation = function(translation_file, keys)
     end
 
     return translation
+end
+
+--- A function that edits the translation file and patches the locale file
+M.edit_translation = function(locale, path, new_translation)
+    local translation_file = M.read_translation_file("src/locales/" .. locale .. ".json")
+    local keys = M.parse_key_path(path)
+
+    local translation = translation_file
+
+    for _, key in ipairs(keys) do
+        translation = translation[key]
+    end
+
+    translation = new_translation
+
+    local new_translation_file = vim.json.encode(translation_file)
+
+    -- NOTE: This doesn't work as expected, maybe we need to find a way to just change a specific line
+    -- the whole decoding and encoding is not working as expected, it creates a lot of changes in the file
+    new_translation_file = vim.fn.system("npx prettier --parser json", new_translation_file)
+
+    vim.fn.writefile(vim.split(new_translation_file, "\n"), "src/locales/" .. locale .. ".json")
 end
 
 return M
