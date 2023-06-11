@@ -21,6 +21,8 @@ M.create_split = function()
     return split
 end
 
+--- @param split table
+--- @param nodes table
 M.create_tree = function(split, nodes)
     local tree = NuiTree({
         winid = split.winid,
@@ -41,6 +43,7 @@ M.create_tree = function(split, nodes)
                 { prompt = "Enter new translation: ", default = node_without_locale },
                 function(new_translation)
                     t.edit_translation(locale, path, new_translation)
+                    node.text = locale .. ": " .. new_translation
                 end
             )
         elseif node:is_expanded() then
@@ -73,7 +76,7 @@ M.create_tree = function(split, nodes)
     tree:render()
 end
 
----@param matches string[]
+--- @param matches string[]
 M.get_translation_nodes = function(matches)
     local nodes = {}
     local locales = t.detect_languages()
@@ -97,6 +100,7 @@ M.get_translation_nodes = function(matches)
     return vim.tbl_values(nodes)
 end
 
+--- @param node table
 M.prompt_new_translation = function(node)
     local node_without_locale = node.text:gsub("^[^:]+: ", "")
 
