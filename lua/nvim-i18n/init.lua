@@ -11,7 +11,7 @@ M.open = function()
     --- This matches `t('path.to.translation')` function calls
     local query_t_calls = [[
         (call_expression
-          function: (identifier) @t (#match? @t "t")
+          function: (identifier) @t (#eq? @t "t")
           arguments: (arguments (string (string_fragment) @path))
         )
     ]]
