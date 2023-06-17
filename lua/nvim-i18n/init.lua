@@ -1,12 +1,7 @@
 local M = {}
 
-local state = {}
-
 M.open = function()
-    local translation = require("nvim-i18n.translation")
     local ui = require("nvim-i18n.ui")
-
-    local ts_utils = require("nvim-treesitter.ts_utils")
 
     --- This matches `t('path.to.translation')` function calls
     local query_t_calls = [[
@@ -36,8 +31,6 @@ M.open = function()
             table.insert(captures, path)
         end
     end
-
-    -- local key = vim.fn.input({ prompt = "Enter key: " })
 
     local split = ui.create_split()
     ui.create_tree(split, ui.get_translation_nodes(captures))
