@@ -42,8 +42,9 @@ M.create_tree = function(split, nodes)
             vim.ui.input(
                 { prompt = "Enter new translation: ", default = node_without_locale },
                 function(new_translation)
-                    t.edit_translation(locale, path, new_translation)
-                    node.text = locale .. ": " .. new_translation
+                    t.edit_translation(locale, path, new_translation, function()
+                        node.text = locale .. ": " .. new_translation
+                    end)
                 end
             )
         elseif node:is_expanded() then
@@ -87,7 +88,7 @@ M.get_translation_nodes = function(matches)
         for _, locale in ipairs(locales) do
             local translation_file = t.read_translation_file("src/locales/" .. locale .. ".json")
             local keys = t.parse_key_path(match)
-            local translation = t.get_translation(translation_file, keys)
+            local translation = t.get_translation(translation_file, keys) or ""
 
             table.insert(child_nodes, NuiTree.Node({ text = locale .. ": " .. translation }))
         end

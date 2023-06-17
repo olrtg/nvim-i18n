@@ -55,7 +55,8 @@ end
 --- @param locale string
 --- @param key string
 --- @param new_translation string
-M.edit_translation = function(locale, key, new_translation)
+--- @param callback function
+M.edit_translation = function(locale, key, new_translation, callback)
     local file_location = "src/locales/" .. locale .. ".json"
 
     local raw_file = M.read_file(file_location)
@@ -71,7 +72,11 @@ M.edit_translation = function(locale, key, new_translation)
         end
     end
 
-    vim.fn.writefile(file, file_location)
+    if pcall(vim.fn.writefile, file, file_location) then
+        callback()
+    else
+        vim.notify("Failed to write to file: " .. file_location, vim.log.levels.ERROR)
+    end
 end
 
 return M
