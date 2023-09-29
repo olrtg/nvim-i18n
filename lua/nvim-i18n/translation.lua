@@ -1,54 +1,60 @@
 local M = {}
 
+function M.project_has_i18n()
+	local common_dirs = { "locales", "src/locales", "public/locales" }
+end
+
 --- Detects the supported locales in the project
-M.detect_languages = function()
-    local locales = {}
+function M.detect_languages()
+	local locales = {}
 
-    --- @type string[]
-    --- @diagnostic disable-next-line: param-type-mismatch, assign-type-mismatch
-    local files = vim.fn.globpath(vim.fn.getcwd(), "src/locales/*.json", true, true)
+	--- @type string[]
+	local files = vim.fn.globpath(vim.fn.getcwd(), "src/locales/*.json", true, true)
 
-    for _, file in ipairs(files) do
-        local locale = vim.fn.fnamemodify(file, ":t:r")
-        table.insert(locales, locale)
-    end
+	for _, file in ipairs(files) do
+		local locale = vim.fn.fnamemodify(file, ":t:r")
+		table.insert(locales, locale)
+	end
 
-    return locales
+	return locales
 end
 
 --- @param path string
-M.read_file = function(path)
-    local raw_file = vim.fn.readfile(path)
-    local file = vim.fn.join(raw_file, "\n")
+--- @return string
+function M.read_file(path)
+	-- TODO: Investigate how can I implement this using buffers
+	local raw_file = vim.fn.readfile(path)
+	local file = vim.fn.join(raw_file, "\n")
 
-    return file
+	return file
 end
 
 --- @param path string
-M.read_translation_file = function(path)
-    local file = M.read_file(path)
-    local translation_file = vim.json.decode(file)
+function M.read_translation_file(path)
+	local file = M.read_file(path)
+	local translation_file = vim.json.decode(file)
 
-    return translation_file
+	return translation_file
 end
 
 --- @param key string
-M.parse_key_path = function(key)
-    local parse_key = vim.fn.split(key, "\\.")
+--- @return string[]
+function M.parse_key_path(key)
+	local parse_key = vim.fn.split(key, "\\.")
 
-    return parse_key
+	return parse_key
 end
 
 --- @param translation_file table
---- @param keys any[]
-M.get_translation = function(translation_file, keys)
-    local translation = translation_file
+--- @param keys string[]
+function M.get_translation(translation_file, keys)
+	local translation = translation_file
 
-    for _, key in ipairs(keys) do
-        translation = translation[key]
-    end
+	for _, key in ipairs(keys) do
+		translation = translation[key]
+	end
 
-    return translation
+	return translation
 end
 
 --- A function that edits the translation file and patches the locale file
@@ -56,27 +62,55 @@ end
 --- @param key string
 --- @param new_translation string
 --- @param callback function
-M.edit_translation = function(locale, key, new_translation, callback)
-    local file_location = "src/locales/" .. locale .. ".json"
+function M.edit_translation(locale, key, new_translation, callback)
+	local file_location = "src/locales/" .. locale .. ".json"
 
-    local raw_file = M.read_file(file_location)
-    local file = vim.split(raw_file, "\n")
-    local keys = M.parse_key_path(key)
+	local file = M.read_file(file_location)
+	local keys = M.parse_key_path(key)
 
-    for index, line in ipairs(file) do
-        local indentation = line:match("^%s+")
-        local line_without_indentation = line:gsub("^%s+", "")
+	-- NOTE: should find a way to generate this on the fly
+	local find_final_key = [[
+        ;; query
+        (pair
+          key: (string (string_content) @pkey (#eq? @pkey "%s"))
+          value: (object (pair
+            key: (string (string_content) @ckey (#eq? @ckey "%s"))
+            value: (string (string_content) @cvalue)))
+        )
+    ]]
 
-        if vim.startswith(line_without_indentation, '"' .. keys[#keys] .. '"') then
-            file[index] = indentation .. '"' .. keys[#keys] .. '": "' .. new_translation .. '",'
-        end
-    end
+	local find_final_key_interpolated = string.format(find_final_key, keys[1], keys[#keys])
 
-    if pcall(vim.fn.writefile, file, file_location) then
-        callback()
-    else
-        vim.notify("Failed to write to file: " .. file_location, vim.log.levels.ERROR)
-    end
+	local parser = vim.treesitter.get_string_parser(file, "json")
+	local ok, query = pcall(vim.treesitter.query.parse, parser:lang(), find_final_key_interpolated)
+
+	if not ok then
+		vim.notify("Failed to parse query", vim.log.levels.ERROR)
+		return
+	end
+
+	local tree = parser:parse()[1]
+
+	local new_file = vim.split(file, "\n")
+
+	for capture_id, capture_node in query:iter_captures(tree:root(), file, 0, -1) do
+		local capture_name = query.captures[capture_id]
+
+		if capture_name == "cvalue" then
+			local start_row = capture_node:range()
+			local indentation = new_file[start_row + 1]:match("^%s+")
+			local final_char = new_file[start_row + 1]:sub(-1) == "," and "," or ""
+
+			new_file[start_row + 1] =
+				string.format('%s"%s": "%s"%s', indentation, keys[#keys], new_translation, final_char)
+		end
+	end
+
+	if pcall(vim.fn.writefile, new_file, file_location) then
+		callback()
+	else
+		vim.notify("Failed to write to file: " .. file_location, vim.log.levels.ERROR)
+	end
 end
 
 return M

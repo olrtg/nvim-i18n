@@ -9,3 +9,6 @@ test:
 		--noplugin \
 		-u ${TESTS_INIT} \
 		-c "PlenaryBustedDirectory ${TESTS_DIR} { minimal_init = '${TESTS_INIT}' }"
+
+format:
+	~/.local/share/nvim/mason/bin/stylua -g "*.lua" -- .
