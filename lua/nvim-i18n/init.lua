@@ -5,8 +5,11 @@ M.open = function()
 	local detected = require("nvim-i18n.detector").detector()
 
 	if not detected then
+		vim.notify("Could not detect any framework in your project", vim.log.levels.ERROR)
 		return
 	end
+
+	-- NOTE: We should check if a buffer exist first before calling treesitter here
 
 	local captures = {}
 

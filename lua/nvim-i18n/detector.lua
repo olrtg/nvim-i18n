@@ -33,6 +33,7 @@ function M.detector()
 
 		for _, framework in pairs(frameworks.web) do
 			for _, package in pairs(framework.detection.package_json) do
+				-- NOTE: This in theory will just return in the first match but this is not correct
 				if M.is_dependency_in_package_json(package) then
 					return framework
 				end
