@@ -7,6 +7,12 @@ return {
 		package_json = { "react-i18next" },
 	},
 
+	common_dirs = {
+		"locales",
+		"src/locales",
+		"public/locales",
+	},
+
 	filetypes = {
 		"javascript",
 		"typescript",
@@ -14,7 +20,7 @@ return {
 		"typescriptreact",
 	},
 
-	parsers = {
+	query_strings = {
 		[[
             ;; query
             (call_expression

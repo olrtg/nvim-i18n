@@ -1,7 +1,7 @@
 TESTS_INIT=tests/minimal_init.lua
 TESTS_DIR=tests/
 
-.PHONY: test
+.PHONY: test format
 
 test:
 	@nvim \
