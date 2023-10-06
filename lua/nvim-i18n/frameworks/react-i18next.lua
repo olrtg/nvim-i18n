@@ -25,9 +25,17 @@ return {
             ;; query
             (call_expression
               function: (identifier) @t (#eq? @t "t")
-              arguments: (arguments (string (string_fragment) @path))
-            )
+              arguments: (arguments (string (string_fragment) @path)))
         ]],
-		-- TODO: add i18nKey use case
+
+		[[
+			;; query
+			(jsx_element
+			  open_tag: (jsx_opening_element
+				name: (identifier) @id (#eq? @id "Trans")
+				attribute: (jsx_attribute (
+				  (property_identifier) @prop (#eq? @prop "i18nKey")
+				  (string (string_fragment) @path)))))
+		]],
 	},
 }
