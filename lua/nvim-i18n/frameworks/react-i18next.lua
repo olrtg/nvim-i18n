@@ -13,11 +13,10 @@ return {
 		"public/locales",
 	},
 
-	filetypes = {
-		"javascript",
-		"typescript",
-		"javascriptreact",
-		"typescriptreact",
+	file_extensions = {
+		"json",
+		"yml",
+		"yaml",
 	},
 
 	query_strings = {

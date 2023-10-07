@@ -78,9 +78,9 @@ M.create_tree = function(split, nodes)
 end
 
 --- @param matches string[]
-M.get_translation_nodes = function(matches)
+M.get_translation_nodes = function(detected_framework, matches)
 	local nodes = {}
-	local locales = t.detect_languages()
+	local locales = t.detect_languages(detected_framework)
 
 	for _, match in ipairs(matches) do
 		local child_nodes = {}

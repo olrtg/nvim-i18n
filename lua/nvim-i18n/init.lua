@@ -35,7 +35,7 @@ M.open = function()
 	end
 
 	local split = ui.create_split()
-	ui.create_tree(split, ui.get_translation_nodes(captures))
+	ui.create_tree(split, ui.get_translation_nodes(detected, captures))
 end
 
 M.setup = function()

@@ -1,15 +1,23 @@
 local M = {}
 
-function M.project_has_i18n()
-	local common_dirs = { "locales", "src/locales", "public/locales" }
-end
-
 --- Detects the supported locales in the project
-function M.detect_languages()
+function M.detect_languages(detected_framework)
 	local locales = {}
+	local files = {}
 
-	--- @type string[]
-	local files = vim.fn.globpath(vim.fn.getcwd(), "src/locales/*.json", true, true)
+	for _, dir in pairs(detected_framework.common_dirs) do
+		for _, file_extension in pairs(detected_framework.file_extensions) do
+			files = vim.fn.globpath(vim.fn.getcwd(), dir .. "/*." .. file_extension, true, true) --[[ @as string[] ]]
+
+			if #files > 1 then
+				break
+			end
+		end
+
+		if #files > 1 then
+			break
+		end
+	end
 
 	for _, file in ipairs(files) do
 		local locale = vim.fn.fnamemodify(file, ":t:r")
