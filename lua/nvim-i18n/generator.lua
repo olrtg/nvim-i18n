@@ -13,8 +13,11 @@ return {
 			return string.format('(string (string_content) @%s_key (#eq? @%s_key "%s"))', value, value, value)
 		end,
 
+		--- @param value string
+		--- @return string
 		value = function(value)
 			return string.format("(string (string_content) @%s_value)", value)
 		end,
 	},
+	yaml = {},
 }
