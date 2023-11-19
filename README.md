@@ -7,9 +7,10 @@
   A plugin to improve your workflow with i18n.
 </p>
 
+<!-- prettier-ignore-start -->
 > **Warning**
->
 > **nvim-i18n** is still in early stages of development.
+<!-- prettier-ignore-end -->
 
 # Installation
 

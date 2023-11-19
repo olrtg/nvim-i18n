@@ -45,14 +45,6 @@ function M.read_translation_file(path)
 	return translation_file
 end
 
---- @param key string
---- @return string[]
-function M.parse_key_path(key)
-	local parse_key = vim.fn.split(key, "\\.")
-
-	return parse_key
-end
-
 --- @param translation_file table
 --- @param keys string[]
 function M.get_translation(translation_file, keys)
@@ -74,23 +66,12 @@ function M.edit_translation(locale, key, new_translation, callback)
 	local file_location = "src/locales/" .. locale .. ".json"
 
 	local file = M.read_file(file_location)
-	local keys = M.parse_key_path(key)
+	local keys = require("nvim-i18n.utils").parse_key_path(key)
 
-	-- NOTE: should find a way to generate this on the fly
-	local find_final_key = [[
-        ;; query
-        (pair
-          key: (string (string_content) @pkey (#eq? @pkey "%s"))
-          value: (object (pair
-            key: (string (string_content) @ckey (#eq? @ckey "%s"))
-            value: (string (string_content) @cvalue)))
-        )
-    ]]
-
-	local find_final_key_interpolated = string.format(find_final_key, keys[1], keys[#keys])
+	local to_query = require("nvim-i18n.utils").get_ts_query_by_keys(keys)
 
 	local parser = vim.treesitter.get_string_parser(file, "json")
-	local ok, query = pcall(vim.treesitter.query.parse, parser:lang(), find_final_key_interpolated)
+	local ok, query = pcall(vim.treesitter.query.parse, parser:lang(), to_query)
 
 	if not ok then
 		vim.notify("Failed to parse query", vim.log.levels.ERROR)
@@ -104,7 +85,7 @@ function M.edit_translation(locale, key, new_translation, callback)
 	for capture_id, capture_node in query:iter_captures(tree:root(), file, 0, -1) do
 		local capture_name = query.captures[capture_id]
 
-		if capture_name == "cvalue" then
+		if capture_name == keys[#keys] .. "_value" then
 			local start_row = capture_node:range()
 			local indentation = new_file[start_row + 1]:match("^%s+")
 			local final_char = new_file[start_row + 1]:sub(-1) == "," and "," or ""

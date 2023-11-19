@@ -4,6 +4,7 @@ local NuiSplit = require("nui.split")
 local NuiTree = require("nui.tree")
 
 local t = require("nvim-i18n.translation")
+local u = require("nvim-i18n.utils")
 
 M.create_split = function()
 	local split = NuiSplit({
@@ -87,7 +88,7 @@ M.get_translation_nodes = function(detected_framework, matches)
 
 		for _, locale in ipairs(locales) do
 			local translation_file = t.read_translation_file("src/locales/" .. locale .. ".json")
-			local keys = t.parse_key_path(match)
+			local keys = u.parse_key_path(match)
 			local translation = t.get_translation(translation_file, keys) or ""
 
 			table.insert(child_nodes, NuiTree.Node({ text = locale .. ": " .. translation }))
