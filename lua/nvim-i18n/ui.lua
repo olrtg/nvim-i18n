@@ -75,6 +75,28 @@ M.create_tree = function(split, nodes)
 		end
 	end, map_options)
 
+	-- collapse all nodes
+	split:map("n", "H", function()
+		local ns = tree:get_nodes()
+
+		for _, node in pairs(ns) do
+			if node:collapse() then
+				tree:render()
+			end
+		end
+	end)
+
+	-- expand all nodes
+	split:map("n", "L", function()
+		local ns = tree:get_nodes()
+
+		for _, node in pairs(ns) do
+			if node:expand() then
+				tree:render()
+			end
+		end
+	end)
+
 	tree:render()
 end
 
