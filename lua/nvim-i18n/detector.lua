@@ -29,8 +29,6 @@ function M.detector()
 	local frameworks = require("nvim-i18n.frameworks")
 
 	if M.is_web_project() then
-		vim.notify("This is a web project", vim.log.levels.INFO)
-
 		for _, framework in pairs(frameworks.web) do
 			for _, package in pairs(framework.detection.package_json) do
 				-- NOTE: This in theory will just return in the first match but this is not correct
