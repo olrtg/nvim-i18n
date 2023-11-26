@@ -20,6 +20,26 @@
 { "olrtg/nvim-i18n", dependencies = "MunifTanjim/nui.nvim", config = true },
 ```
 
+# Usage
+
+```
+:I18n
+```
+
+You can navigate with h/j/k/l, `H` for closing all nodes, `L` for opening all nodes, `Enter` for opening nodes or editing translations.
+
+# Features
+
+- [x] Locales directory detection
+- [x] Read/Write JSON support
+- [ ] Read/Write YAML support
+- [ ] Automatic translations based on a language
+- [ ] Conceal keys with their translations (don't know if conceals can be updated in real time)
+
+Framework support:
+
+- [ ] react-i18next. For normal `t('some.key')` seems to be working fine, no idea with `<Trans />`.
+
 # Motivation
 
 I often work with translations files and since I've migrated to neovim (early 2022) the only missing piece to stay forever in neovim is a i18n plugin. Visual Studio Code has one called [i18n-ally](https://github.com/lokalise/i18n-ally) which it's f\*cking great and I sometimes just hate opening vscode to use that plugin.
