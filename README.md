@@ -8,7 +8,7 @@
 </p>
 
 <!-- prettier-ignore-start -->
-> **Warning**
+> [!WARNING]
 > **nvim-i18n** is still in early stages of development.
 <!-- prettier-ignore-end -->
 
