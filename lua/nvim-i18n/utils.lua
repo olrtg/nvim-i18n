@@ -1,22 +1,23 @@
 local M = {}
 
---- @param key string
---- @return string[]
-function M.parse_key_path(key)
-	local parse_key = vim.fn.split(key, "\\.")
+--- @param path string An object-like path to a translation (example: 'path.to.translation')
+--- @return string[] # A table of keys (example: { 'path', 'to', 'translation' })
+function M.parse_key_path(path)
+	local parse_key = vim.fn.split(path, "\\.") --[=[@as string[]]=]
 
 	return parse_key
 end
 
---- @param path string
+--- @param path string An object-like path to a translation (example: 'path.to.translation')
+--- @return string # A Tree-sitter query
 function M.get_ts_query_by_path(path)
 	local keys = M.parse_key_path(path)
 
 	return M.get_ts_query_by_keys(keys)
 end
 
---- @param keys string[]
---- @return string
+--- @param keys string[] # A table of keys (example: { 'path', 'to', 'translation' })
+--- @return string # A Tree-sitter query
 function M.get_ts_query_by_keys(keys)
 	local g = require("nvim-i18n.generator").json
 	local query = ""

@@ -26,7 +26,7 @@
 :I18n
 ```
 
-You can navigate with h/j/k/l, `H` for closing all nodes, `L` for opening all nodes, `Enter` for opening nodes or editing translations.
+You can navigate with `h`/`j`/`k`/`l`, `H` for closing all nodes, `L` for opening all nodes, `Enter` for opening nodes or editing translations.
 
 # Features
 
@@ -38,7 +38,7 @@ You can navigate with h/j/k/l, `H` for closing all nodes, `L` for opening all no
 
 **Framework support:**
 
-- [x] react-i18next
+- [x] react-i18next. Works with `t('some.key')` function and `<Trans />` component, but no support for namespaces yet.
 
 # Motivation
 

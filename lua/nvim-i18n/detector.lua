@@ -1,6 +1,7 @@
 local M = {}
 
---- @param dependency string
+--- @param dependency string The name of a dependency (example: 'react-i18next')
+--- @return boolean
 function M.is_dependency_in_package_json(dependency)
 	local package_json = vim.fn.json_decode(vim.fn.readfile("package.json"))
 
@@ -17,13 +18,16 @@ function M.is_dependency_in_package_json(dependency)
 	if dependencies ~= nil and dependencies[dependency] ~= nil then
 		return true
 	end
+
+	return false
 end
 
+--- @return boolean
 function M.is_web_project()
 	return vim.fn.filereadable(vim.fn.getcwd() .. "/package.json") and true or false
 end
 
---- A function that detects relevant what the user is using
+--- A function that detects relevant info about what the user is using
 --- @return table|nil
 function M.detector()
 	local frameworks = require("nvim-i18n.frameworks")

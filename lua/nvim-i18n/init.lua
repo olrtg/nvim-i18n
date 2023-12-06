@@ -1,6 +1,6 @@
 local M = {}
 
-M.open = function()
+function M.open()
 	local ui = require("nvim-i18n.ui")
 	local detected = require("nvim-i18n.detector").detector()
 
@@ -38,7 +38,7 @@ M.open = function()
 	ui.create_tree(split, ui.get_translation_nodes(detected, captures))
 end
 
-M.setup = function()
+function M.setup()
 	vim.api.nvim_create_user_command("I18n", M.open, {})
 end
 

@@ -6,7 +6,7 @@ local NuiTree = require("nui.tree")
 local t = require("nvim-i18n.translation")
 local u = require("nvim-i18n.utils")
 
-M.create_split = function()
+function M.create_split()
 	local split = NuiSplit({
 		relative = "editor",
 		position = "bottom",
@@ -24,7 +24,7 @@ end
 
 --- @param split table
 --- @param nodes table
-M.create_tree = function(split, nodes)
+function M.create_tree(split, nodes)
 	local tree = NuiTree({
 		winid = split.winid,
 		nodes = nodes,
@@ -101,7 +101,7 @@ M.create_tree = function(split, nodes)
 end
 
 --- @param matches string[]
-M.get_translation_nodes = function(detected_framework, matches)
+function M.get_translation_nodes(detected_framework, matches)
 	local nodes = {}
 	local locales = t.detect_languages(detected_framework)
 
@@ -125,7 +125,7 @@ M.get_translation_nodes = function(detected_framework, matches)
 end
 
 --- @param node table
-M.prompt_new_translation = function(node)
+function M.prompt_new_translation(node)
 	local node_without_locale = node.text:gsub("^[^:]+: ", "")
 
 	local translation = vim.ui.input(

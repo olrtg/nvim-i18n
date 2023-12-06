@@ -7,7 +7,7 @@ function M.detect_languages(detected_framework)
 
 	for _, dir in pairs(detected_framework.common_dirs) do
 		for _, file_extension in pairs(detected_framework.file_extensions) do
-			files = vim.fn.globpath(vim.fn.getcwd(), dir .. "/*." .. file_extension, true, true) --[[ @as string[] ]]
+			files = vim.fn.globpath(vim.fn.getcwd(), dir .. "/*." .. file_extension, true, true) --[=[@as string[]]=]
 
 			if #files > 1 then
 				break
