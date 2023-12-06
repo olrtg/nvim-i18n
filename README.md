@@ -36,9 +36,9 @@ You can navigate with h/j/k/l, `H` for closing all nodes, `L` for opening all no
 - [ ] Automatic translations based on a language
 - [ ] Conceal keys with their translations (don't know if conceals can be updated in real time)
 
-Framework support:
+**Framework support:**
 
-- [ ] react-i18next. For normal `t('some.key')` seems to be working fine, no idea with `<Trans />`.
+- [x] react-i18next
 
 # Motivation
 
