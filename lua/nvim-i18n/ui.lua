@@ -100,24 +100,26 @@ function M.create_tree(split, nodes)
 	tree:render()
 end
 
---- @param matches string[]
-function M.get_translation_nodes(detected_framework, matches)
+--- @param detected_framework table
+--- @param captures string[]
+function M.get_translation_nodes(detected_framework, captures)
 	local nodes = {}
 	local locales = t.detect_languages(detected_framework)
 
-	for _, match in ipairs(matches) do
+	for _, capture in ipairs(captures) do
 		local child_nodes = {}
 
 		for _, locale in ipairs(locales) do
+			-- TODO: check all common dirs
 			local translation_file = t.read_translation_file("src/locales/" .. locale .. ".json")
-			local keys = u.parse_key_path(match)
+			local keys = u.parse_key_path(capture)
 			local translation = t.get_translation(translation_file, keys) or ""
 
 			table.insert(child_nodes, NuiTree.Node({ text = locale .. ": " .. translation }))
 		end
 
-		if nodes[match] == nil then
-			nodes[match] = NuiTree.Node({ text = match }, child_nodes)
+		if nodes[capture] == nil then
+			nodes[capture] = NuiTree.Node({ text = capture }, child_nodes)
 		end
 	end
 

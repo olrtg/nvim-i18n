@@ -24,7 +24,13 @@ end
 
 --- @return boolean
 function M.is_web_project()
-	return vim.fn.filereadable(vim.fn.getcwd() .. "/package.json") and true or false
+	local file_readable = vim.fn.filereadable(vim.fn.getcwd() .. "/package.json")
+
+	if file_readable == 1 then
+		return true
+	end
+
+	return false
 end
 
 --- A function that detects relevant info about what the user is using

@@ -1,8 +1,11 @@
 local M = {}
 
 --- Detects the supported locales in the project
+--- @return string[]
 function M.detect_languages(detected_framework)
+	--- @type string[]
 	local locales = {}
+
 	local files = {}
 
 	for _, dir in pairs(detected_framework.common_dirs) do
@@ -28,10 +31,10 @@ function M.detect_languages(detected_framework)
 end
 
 --- @param path string
---- @return string
 function M.read_file(path)
-	-- TODO: Investigate how can I implement this using buffers
+	--- @type string[]
 	local raw_file = vim.fn.readfile(path)
+	--- @type string
 	local file = vim.fn.join(raw_file, "\n")
 
 	return file
@@ -40,6 +43,7 @@ end
 --- @param path string
 function M.read_translation_file(path)
 	local file = M.read_file(path)
+	--- @type table
 	local translation_file = vim.json.decode(file)
 
 	return translation_file
@@ -48,13 +52,13 @@ end
 --- @param translation_file table
 --- @param keys string[]
 function M.get_translation(translation_file, keys)
-	local translation = translation_file
+	local translation = vim.deepcopy(translation_file)
 
 	for _, key in ipairs(keys) do
 		translation = translation[key]
 	end
 
-	return translation
+	return translation --[=[@as string]=]
 end
 
 --- A function that edits the translation file and patches the locale file
@@ -74,7 +78,7 @@ function M.edit_translation(locale, key, new_translation, callback)
 	local ok, query = pcall(vim.treesitter.query.parse, parser:lang(), to_query)
 
 	if not ok then
-		vim.notify("Failed to parse query", vim.log.levels.ERROR)
+		vim.notify("nvim-i18n: Failed to parse query", vim.log.levels.ERROR)
 		return
 	end
 
@@ -98,7 +102,7 @@ function M.edit_translation(locale, key, new_translation, callback)
 	if pcall(vim.fn.writefile, new_file, file_location) then
 		callback()
 	else
-		vim.notify("Failed to write to file: " .. file_location, vim.log.levels.ERROR)
+		vim.notify("nvim-i18n: Failed to write to file: " .. file_location, vim.log.levels.ERROR)
 	end
 end
 

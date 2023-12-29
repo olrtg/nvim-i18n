@@ -1,5 +1,7 @@
 local M = {}
 
+M.CURRENT_BUFFER = 0
+
 --- @param path string An object-like path to a translation (example: 'path.to.translation')
 --- @return string[] # A table of keys (example: { 'path', 'to', 'translation' })
 function M.parse_key_path(path)
