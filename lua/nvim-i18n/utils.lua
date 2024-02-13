@@ -37,4 +37,22 @@ function M.get_ts_query_by_keys(keys)
 	return query
 end
 
+--- @param char string|number
+--- @return string
+function M.char_to_hex(char)
+	return string.format("%%%02X", string.byte(char))
+end
+
+--- @param url string
+--- @return string|nil
+function M.encode_url(url)
+	if url == nil then
+		return
+	end
+	url = url:gsub("\n", "\r\n")
+	url = url:gsub("([^%w _%%%-%.~])", M.char_to_hex)
+	url = url:gsub(" ", "+")
+	return url
+end
+
 return M

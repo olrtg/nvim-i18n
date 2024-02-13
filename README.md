@@ -17,13 +17,17 @@
 **[lazy.nvim](https://github.com/folke/lazy.nvim)**
 
 ```lua
-{ "olrtg/nvim-i18n", dependencies = "MunifTanjim/nui.nvim", config = true },
+{
+  "olrtg/nvim-i18n",
+  dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },
+  config = true,
+},
 ```
 
 # Usage
 
 ```
-:I18n
+:Internationalization
 ```
 
 You can navigate with `h`/`j`/`k`/`l`, `H` for closing all nodes, `L` for opening all nodes, `Enter` for opening nodes or editing translations.

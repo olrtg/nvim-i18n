@@ -97,6 +97,32 @@ function M.create_tree(split, nodes)
 		end
 	end)
 
+	-- translate all keys with google translate
+	split:map("n", "T", function()
+		local node = tree:get_node()
+
+		if not node:has_children() then
+			local locale = node.text:match("^[^:]+")
+			local node_without_locale = node.text:gsub("^[^:]+: ", "")
+			local text = u.encode_url(node_without_locale)
+
+			local response = vim.json.decode(
+				require("plenary.curl").get(
+					"https://translate.googleapis.com/translate_a/single?client=gtx&sl="
+						.. locale
+						.. "&tl="
+						.. "es"
+						.. "&hl=zh-CN&dt=t&dt=bd&ie=UTF-8&oe=UTF-8&dj=1&source=icon&q="
+						.. text
+				).body
+			)
+
+			vim.print(response.sentences)
+		end
+
+		tree:render()
+	end)
+
 	tree:render()
 end
 
@@ -139,5 +165,7 @@ function M.prompt_new_translation(node)
 
 	return translation
 end
+
+function M.translate_with_service() end
 
 return M
