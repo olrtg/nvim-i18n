@@ -30,7 +30,7 @@
 :Internationalization
 ```
 
-You can navigate with `h`/`j`/`k`/`l`, `H` for closing all nodes, `L` for opening all nodes, `Enter` for opening nodes or editing translations.
+You can navigate with `h`/`j`/`k`/`l`, `H` for closing all nodes, `L` for opening all nodes, `Enter` for opening nodes or editing translations, `T` for translating all the sibling translations using the current translation as the base.
 
 # Features
 
