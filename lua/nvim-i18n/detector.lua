@@ -41,7 +41,11 @@ function M.detector()
 	if M.is_web_project() then
 		for _, framework in pairs(frameworks.web) do
 			for _, package in pairs(framework.detection.package_json) do
-				-- NOTE: This in theory will just return in the first match but this is not correct
+				-- NOTE: This in theory will just return in the first match but
+				-- this is not correct.
+				-- EDIT: Idk about this, maybe I wanted to
+				-- match all of the dependencies before confirming that uses X
+				-- framework.
 				if M.is_dependency_in_package_json(package) then
 					return framework
 				end

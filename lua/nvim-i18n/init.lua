@@ -11,6 +11,11 @@ function M.open()
 		return
 	end
 
+	if vim.fn.bufexists(0) == 0 then
+		vim.notify("You cannot run this command in an empty buffer", vim.log.levels.ERROR)
+		return
+	end
+
 	local captures = {}
 
 	for _, query_string in pairs(detected.query_strings) do
@@ -39,7 +44,7 @@ function M.open()
 end
 
 function M.setup()
-	vim.api.nvim_create_user_command("I18n", M.open, {})
+	vim.api.nvim_create_user_command("Internationalization", M.open, {})
 end
 
 return M
