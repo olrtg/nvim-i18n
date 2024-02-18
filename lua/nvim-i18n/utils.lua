@@ -44,15 +44,36 @@ function M.char_to_hex(char)
 end
 
 --- @param url string
---- @return string|nil
+--- @return string
 function M.encode_url(url)
-	if url == nil then
-		return
-	end
 	url = url:gsub("\n", "\r\n")
 	url = url:gsub("([^%w _%%%-%.~])", M.char_to_hex)
 	url = url:gsub(" ", "+")
 	return url
+end
+
+---@class Payload
+---@field text string
+---@field from string
+---@field to string
+---
+---@param payload Payload
+---@return unknown
+function M.get_translation_from_google_translate(payload)
+	local encoded_text = M.encode_url(payload.text)
+
+	local response = vim.json.decode(
+		require("plenary.curl").get(
+			"https://translate.googleapis.com/translate_a/single?client=gtx&sl="
+				.. payload.from
+				.. "&tl="
+				.. payload.to
+				.. "&hl=zh-CN&dt=t&dt=bd&ie=UTF-8&oe=UTF-8&dj=1&source=icon&q="
+				.. encoded_text
+		).body
+	)
+
+	return response.sentences[1].trans
 end
 
 return M

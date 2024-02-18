@@ -102,22 +102,27 @@ function M.create_tree(split, nodes)
 		local node = tree:get_node()
 
 		if not node:has_children() then
+			local nodes_of_parent = tree:get_nodes(node:get_parent_id())
+			local siblings = vim.tbl_filter(function(sibling)
+				return sibling:get_id() ~= node:get_id()
+			end, nodes_of_parent)
+
 			local locale = node.text:match("^[^:]+")
 			local node_without_locale = node.text:gsub("^[^:]+: ", "")
-			local text = u.encode_url(node_without_locale)
+			local path = tree:get_node(node:get_parent_id()).text
 
-			local response = vim.json.decode(
-				require("plenary.curl").get(
-					"https://translate.googleapis.com/translate_a/single?client=gtx&sl="
-						.. locale
-						.. "&tl="
-						.. "es"
-						.. "&hl=zh-CN&dt=t&dt=bd&ie=UTF-8&oe=UTF-8&dj=1&source=icon&q="
-						.. text
-				).body
-			)
+			for _, sibling in pairs(siblings) do
+				local sibling_locale = sibling.text:match("^[^:]+")
+				local translation = u.get_translation_from_google_translate({
+					text = node_without_locale,
+					from = locale,
+					to = sibling_locale,
+				})
 
-			vim.print(response.sentences)
+				t.edit_translation(sibling_locale, path, translation, function()
+					sibling.text = sibling_locale .. ": " .. translation
+				end)
+			end
 		end
 
 		tree:render()
