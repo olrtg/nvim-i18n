@@ -37,7 +37,8 @@ You can navigate with `h`/`j`/`k`/`l`, `H` for closing all nodes, `L` for openin
 - [x] Locales directory detection
 - [x] Read/Write JSON support
 - [ ] Read/Write YAML support
-- [ ] Automatic translations based on a language
+- [x] Automatic translations based on a language
+  - [ ] With multiple engines
 - [ ] Conceal keys with their translations (don't know if conceals can be updated in real time)
 
 **Framework support:**
