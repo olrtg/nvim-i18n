@@ -28,6 +28,7 @@ function M.create_tree(split, nodes)
 	local tree = NuiTree({
 		winid = split.winid,
 		nodes = nodes,
+		bufnr = u.CURRENT_BUFFER,
 	})
 
 	local map_options = { noremap = true, nowait = true }
@@ -35,6 +36,11 @@ function M.create_tree(split, nodes)
 	-- toggle or edit current node
 	split:map("n", "<CR>", function()
 		local node = tree:get_node()
+
+		-- TODO: Handle better
+		if not node then
+			return
+		end
 
 		if not node:has_children() then
 			local locale = node.text:match("^[^:]+")
@@ -61,6 +67,11 @@ function M.create_tree(split, nodes)
 	split:map("n", "h", function()
 		local node = tree:get_node()
 
+		-- TODO: Handle better
+		if not node then
+			return
+		end
+
 		if node:collapse() then
 			tree:render()
 		end
@@ -69,6 +80,11 @@ function M.create_tree(split, nodes)
 	-- expand current node
 	split:map("n", "l", function()
 		local node = tree:get_node()
+
+		-- TODO: Handle better
+		if not node then
+			return
+		end
 
 		if node:expand() then
 			tree:render()
@@ -100,6 +116,11 @@ function M.create_tree(split, nodes)
 	-- translate all keys with google translate
 	split:map("n", "T", function()
 		local node = tree:get_node()
+
+		-- TODO: Handle better
+		if not node then
+			return
+		end
 
 		if not node:has_children() then
 			local nodes_of_parent = tree:get_nodes(node:get_parent_id())
