@@ -22,13 +22,13 @@ function M.create_split()
 	return split
 end
 
---- @param split table
---- @param nodes table
+--- @param split NuiSplit
+--- @param nodes NuiTree.Node[]
 function M.create_tree(split, nodes)
 	local tree = NuiTree({
 		winid = split.winid,
 		nodes = nodes,
-		bufnr = u.CURRENT_BUFFER,
+		bufnr = vim.api.nvim_get_current_buf(),
 	})
 
 	local map_options = { noremap = true, nowait = true }

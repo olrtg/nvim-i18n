@@ -28,12 +28,13 @@ function M.open()
 		end
 
 		local tree = parser:parse()[1]
+		local bufnr = vim.api.nvim_get_current_buf()
 
-		for capture_id, capture_node in query:iter_captures(tree:root(), utils.CURRENT_BUFFER, 0, -1) do
+		for capture_id, capture_node in query:iter_captures(tree:root(), bufnr, 0, -1) do
 			local capture_name = query.captures[capture_id]
 
 			if capture_name == "path" then
-				local path = vim.treesitter.get_node_text(capture_node, utils.CURRENT_BUFFER)
+				local path = vim.treesitter.get_node_text(capture_node, bufnr)
 				table.insert(captures, path)
 			end
 		end
