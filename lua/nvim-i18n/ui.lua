@@ -51,16 +51,17 @@ function M.create_tree(split, nodes)
 				function(new_translation)
 					t.edit_translation(locale, path, new_translation, function()
 						node.text = locale .. ": " .. new_translation
+						tree:render()
 					end)
 				end
 			)
 		elseif node:is_expanded() then
 			node:collapse()
+			tree:render()
 		else
 			node:expand()
+			tree:render()
 		end
-
-		tree:render()
 	end, map_options)
 
 	-- collapse current node

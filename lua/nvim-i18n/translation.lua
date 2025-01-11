@@ -99,7 +99,8 @@ function M.edit_translation(locale, key, new_translation, callback)
 		end
 	end
 
-	if pcall(vim.fn.writefile, new_file, file_location) then
+	local write_result = vim.fn.writefile(new_file, file_location)
+	if write_result == 0 then
 		callback()
 	else
 		vim.notify("nvim-i18n: Failed to write to file: " .. file_location, vim.log.levels.ERROR)

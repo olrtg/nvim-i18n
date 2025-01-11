@@ -1,7 +1,5 @@
 local M = {}
 
-local utils = require("nvim-i18n.utils")
-
 function M.open()
 	local ui = require("nvim-i18n.ui")
 	local detected = require("nvim-i18n.detector").detector()
@@ -19,14 +17,15 @@ function M.open()
 	local captures = {}
 
 	for _, query_string in pairs(detected.query_strings) do
-		local parser = vim.treesitter.get_parser()
-		local ok, query = pcall(vim.treesitter.query.parse, parser:lang(), query_string)
+		local parser = vim.fn.has("nvim-0.12") == 1 and vim.treesitter.get_parser()
+			or vim.treesitter.get_parser(nil, nil, { error = false })
 
-		if not ok then
-			vim.notify("nvim-i18n: Failed to parse query", vim.log.levels.ERROR)
+		if not parser then
+			vim.notify("nvim-i18n: Language of buffer could not be determined", vim.log.levels.ERROR)
 			return
 		end
 
+		local query = vim.treesitter.query.parse(parser:lang(), query_string)
 		local tree = parser:parse()[1]
 		local bufnr = vim.api.nvim_get_current_buf()
 
