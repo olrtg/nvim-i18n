@@ -44,17 +44,18 @@ function M.create_tree(split, nodes)
 
 		if not node:has_children() then
 			local locale = node.text:match("^[^:]+")
-			local node_without_locale = node.text:gsub("^[^:]+: ", "")
+			local translation = node.text:gsub("^[^:]+: ", "")
 			local path = tree:get_node(node:get_parent_id()).text
-			vim.ui.input(
-				{ prompt = "Enter new translation: ", default = node_without_locale },
-				function(new_translation)
-					t.edit_translation(locale, path, new_translation, function()
-						node.text = locale .. ": " .. new_translation
-						tree:render()
-					end)
+			vim.ui.input({ prompt = "Enter new translation: ", default = translation }, function(new_translation)
+				if not new_translation then
+					return
 				end
-			)
+
+				t.edit_translation(locale, path, new_translation, function()
+					node.text = locale .. ": " .. new_translation
+					tree:render()
+				end)
+			end)
 		elseif node:is_expanded() then
 			node:collapse()
 			tree:render()
@@ -97,10 +98,10 @@ function M.create_tree(split, nodes)
 		local ns = tree:get_nodes()
 
 		for _, node in pairs(ns) do
-			if node:collapse() then
-				tree:render()
-			end
+			node:collapse()
 		end
+
+		tree:render()
 	end)
 
 	-- expand all nodes
@@ -108,10 +109,10 @@ function M.create_tree(split, nodes)
 		local ns = tree:get_nodes()
 
 		for _, node in pairs(ns) do
-			if node:expand() then
-				tree:render()
-			end
+			node:expand()
 		end
+
+		tree:render()
 	end)
 
 	-- translate all keys with google translate
@@ -145,9 +146,9 @@ function M.create_tree(split, nodes)
 					sibling.text = sibling_locale .. ": " .. translation
 				end)
 			end
-		end
 
-		tree:render()
+			tree:render()
+		end
 	end)
 
 	tree:render()
